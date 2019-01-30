@@ -1,0 +1,11 @@
+server {
+    listen 22000;
+    listen [::]:22000 default_server;
+    server_name 192.168.1.17;
+    root /var/www/html;
+    return 301 http://192.168.1.17:22000;
+ 
+    location / {
+       index index.html index.htm
+    }
+}
