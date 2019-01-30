@@ -20,3 +20,6 @@ Projects:
 5) Raspberry Pi Project - Temperature Logging System
 5.1) Includes Python code to select master and client nodes.
 5.2) Includes basic Node.JS code for rendering (unfinished).
+
+6) Depth of Field Project
+6.1) Implementation of DoF for Eye Trackers.
