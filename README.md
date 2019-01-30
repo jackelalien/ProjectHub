@@ -1,43 +1,68 @@
-Project Hub for my projects:
--- Note: All Projects are in Separate Branches
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Projects:
-1) React JS
-1.1) BurgerBuilder - The code used in the React Course 
+## Available Scripts
 
----- Side Notes: Some extra implementation I added: A Seedless Bun Checker, a Password verification field, and a state list in the order form.
+In the project directory, you can run:
 
----- To see in action, run npm install first
+### `npm start`
 
-1.2) NextJS Test - Tests out the code for NextJS - a useful routing service.
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-1.3) React Tutorial - General React Tutorials from the course - includes a notes page (Notes.txt)
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console.
 
-1.4) Webpack-Test - Tests out Babel, Webpack, and other functionality.
+### `npm test`
 
+Launches the test runner in the interactive watch mode.<br>
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-2) Assignment_JackLaborde
+### `npm run build`
 
-2.1) An Assignment for an Interview to test C# Skills - See ReadMe for more details
+Builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
+The build is minified and the filenames include the hashes.<br>
+Your app is ready to be deployed!
 
-3) GeoCloud SHP -> KML Converter WinForms Project
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-3.1) Source Code available, but requires MapWinGIS (not included) to see Forms - written in C#.
+### `npm run eject`
 
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-4) Deep Learning Final Project
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-4.1) Keras/Tensorflow implementation of chest x-ray image classification. Paper and Source included.
+Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-5) Raspberry Pi Project - Temperature Logging System
+## Learn More
 
-5.1) Includes Python code to select master and client nodes.
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-5.2) Includes basic Node.JS code for rendering (unfinished).
+To learn React, check out the [React documentation](https://reactjs.org/).
 
+### Code Splitting
 
-6) Depth of Field Project (Branch_DOF)
+This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
 
-6.1) Implementation of DoF for Eye Trackers.
+### Analyzing the Bundle Size
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+
+### Making a Progressive Web App
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+
+### Advanced Configuration
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+
+### Deployment
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+
+### `npm run build` fails to minify
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
