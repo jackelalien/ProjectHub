@@ -6,6 +6,7 @@ Projects:
 1.1) BurgerBuilder - The code used in the React Course 
 
 ---- Side Notes: Some extra implementation I added: A Seedless Bun Checker, a Password verification field, and a state list in the order form.
+--- The Aux file in /src/hoc needs to be renamed to Aux.js
 
 ---- To see in action, run npm install first
 
