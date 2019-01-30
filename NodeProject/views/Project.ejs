@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Project</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.bundle.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    </head>
+    <body>
+        <h1 align="center">Raspberry Pi Temperature Logging System</h1>
+        <table style="width:70%">
+            <tr>
+                <th>Current Chart - Temperature</th>
+                <th>Daily Chart - Temperature</th> 
+            </tr>
+            <tr>
+                <td>
+                    <div align="center"><canvas id="currChart" width="800" height="500"></canvas></div>
+                </td>
+                <td>
+                    <div><canvas id="dailyChart" width="800" height="500"></canvas></div>
+                    <div align="center">
+                    <form action="#" onSubmit="Javascript:day_change();return false">
+                        <input type="date" id="dailyDate" name="date_daily" value="2018-07-22">
+                        <input type="submit" value="Submit" />
+                    </form>       
+                    </div>
+                </td>
+                
+            </tr>
+            <tr>
+                <th>Monthly Chart - Temperature</th>
+                <th>Weekly Chart - Temperature</th> 
+            </tr>
+            <tr>
+                <td>
+                    <div><canvas id="monthlyChart" width="800" height="500"></canvas></div>
+                    <<div align="center">
+                    <form action="#" onSubmit="Javascript:month_change();return false">
+                        <input type="month" id="monthlyDate" name="month_daily" value="December 2018">
+                        <input type="submit" value="Submit" />
+                    </form>       
+                    </div>
+                </td>
+
+                <td>
+                    <div><canvas id="weeklyChart" width="800" height="500"></canvas></div>
+                    <div align="center">
+                    <form action="#" onSubmit="Javascript:week_change();return false">
+                        <input type="date" id="weeklyDate" name="date_weekly" value="2018-07-22">
+                        <input type="submit" value="Submit" />
+                    </form>       
+                    </div>
+                </td>
+                
+            </tr>
+            <tr>
+                <th>Yearly Chart - Temperature</th>        
+            </tr>
+
+            <tr>
+                <td>
+                    <div><canvas id="yearlyChart" width="800" height="500"></canvas></div>
+                    <div align="center">
+                    <form action="#" onSubmit="Javascript:year_change();return false">
+                        <input type="date" id="yearly_date" name="date_yearly" value="2018-07-22">
+                        <input type="submit" value="Submit" />
+                    </form>       
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <th>Current Chart - Humidity</th>
+                <th>Daily Chart - Humdiity</th> 
+            </tr>
+
+            <tr>
+                <td>
+                    <div align="center"><canvas id="currChart_H" width="800" height="500"></canvas></div>
+                </td>
+                <td>
+                    <div><canvas id="dailyChart_H" width="800" height="500"></canvas></div>
+                    <div align="center">
+                    <form action="#" onSubmit="Javascript:day_change_H();return false">
+                        <input type="date" id="dailyDate_H" name="date_daily_H" value="2018-07-22">
+                        <input type="submit" value="Submit" />
+                    </form>       
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <th>Weekly Chart - Humidity</th>
+                <th>Monthly Chart - Humidity</th> 
+            </tr>
+            
+            <tr>
+                <td>
+                    <div><canvas id="monthlyChart_H" width="800" height="500"></canvas></div>
+                    <<div align="center">
+                    <form action="#" onSubmit="Javascript:month_change_H();return false">
+                        <input type="month" id="monthlyDate_H" name="month_daily_H" value="December 2018">
+                        <input type="submit" value="Submit" />
+                    </form>       
+                    </div>
+                </td>
+
+                <td>
+                    <div><canvas id="weeklyChart_H" width="800" height="500"></canvas></div>
+                    <div align="center">
+                    <form action="#" onSubmit="Javascript:week_change_H();return false">
+                        <input type="date" id="weeklyDate_H" name="date_weekly_H" value="2018-07-22">
+                        <input type="submit" value="Submit" />
+                    </form>       
+                    </div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>Yearly Chart - Humidity</th>
+            </tr>
+
+            <tr>
+                <td>
+                    <div><canvas id="yearlyChart_H" width="800" height="500"></canvas></div>
+                    <div align="center">
+                    <form action="#" onSubmit="Javascript:year_change_H();return false">
+                        <input type="date" id="yearlyDate" name="date_yearly" value="2018-07-22">
+                        <input type="submit" value="Submit" />
+                    </form>       
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+
+<script>
+    // CURRENT CHART
+    // THIS IS WHAT NEEDS TO BE EDITED
+    // ALONG WITH MAKING A WEEK INPUT FOR THE WEEKLY CHARTS
+    var socket = io();
+    var socket2 = io();
+
+    // Setup variables
+    var ds = []
+    var ls = []
+    var d1 = null
+    var chrt = null
+    var data = null
+    var myFirstChart = null
+    var hChart = null
+
+    // Update Functions should be in this form.
+    // Direct copying can work.
+    const getUpdate = (dx) => {
+        myFirstChart = null
+            ds = []
+            ls = []
+            d1 = dx
+            dx = null
+            if(d1 != null)
+            {
+                d1.forEach(function(d) {  
+                    var jsonObj = {
+                        label: d.label,
+                        lineTension: d.lineTension,
+                        backgroundColor: d.backgroundColor,
+                        borderColor: d.borderColor,
+                        hoverBackgroundColor: d.hoverBackgroundColor,
+                        hoverBorderColor: d.hoverBorderColor,
+                        data: d.data
+                    }  
+                    ds.push(jsonObj)
+                    
+                    d.data.forEach(function(z)
+                    {
+                        ls.push(JSON.stringify(z.x))
+                    });
+                })
+            }
+
+            chrt = document.getElementById("currChart").getContext("2d");
+            
+    
+            data = {
+                labels: ls,
+                datasets: ds
+            };
+
+            myFirstChart = new Chart(chrt, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: false,
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: { 
+                                distribution: 'linear',
+                                unit: 'hour'
+                            }
+                        }]
+                    },
+                animation: false
+                },
+                fill: false
+            });
+
+
+    }
+
+    const getUpdate_H = (dx) => {
+        hChart = null
+            ds = []
+            ls = []
+            d1 = dx
+            dx = null
+            if(d1 != null)
+            {
+                d1.forEach(function(d) {  
+                    var jsonObj = {
+                        label: d.label,
+                        lineTension: d.lineTension,
+                        backgroundColor: d.backgroundColor,
+                        borderColor: d.borderColor,
+                        hoverBackgroundColor: d.hoverBackgroundColor,
+                        hoverBorderColor: d.hoverBorderColor,
+                        data: d.data
+                    }  
+                    ds.push(jsonObj)
+                    
+                    d.data.forEach(function(z)
+                    {
+                        ls.push(JSON.stringify(z.x))
+                    });
+                })
+            }
+
+            chrx = document.getElementById("currChart_H").getContext("2d");
+            
+    
+            data = {
+                labels: ls,
+                datasets: ds
+            };
+
+            hChart = new Chart(chrx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: false,
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: { 
+                                distribution: 'linear',
+                                unit: 'hour'
+                            }
+                        }]
+                    },
+                animation: false
+                },
+                fill: false
+            });
+
+
+    }
+
+    // Check for an emitted update
+    socket.on('update', function(d) {
+            getUpdate(d);
+            d = null;
+           socket.removeAllListeners();
+           socket.disconnect()
+           socket = io();
+
+        });
+
+    // Check for emitted update, humidity
+    socket.on('update_H', function(d) {
+            getUpdate_H(d);
+            d = null;
+           socket.removeAllListeners();
+           socket.disconnect()
+           socket = io();
+
+        });
+
+    // Daily Chart
+    var ls2 = []
+    var ds2 = []
+    
+    // Day, Month, Week, Year Changes follow the format below.
+    function day_change()
+    {
+        ls2 = []
+        ds2 = []
+        socket2.emit('beginDayChange', document.getElementById("dailyDate").value);
+    }
+
+    function month_change()
+    {
+        ls2 = []
+        ds2 = []
+        socket2.emit('beginMonthChange', document.getElementById("monthlyDate").value)
+    }
+
+    function week_change()
+    {
+        ls2 = []
+        ds2 = []
+        socket2.emit('beginWeekChange', document.getElementById("weeklyDate").value)
+    }
+
+    // Some issues with the non-day charts: Y-axis is weird.
+
+    // This is how to get daily chart
+    const GetDailyChart = (dx) => {
+        var chrt2 = document.getElementById("dailyChart").getContext("2d");
+        
+            if(dx != null)
+            {
+                var bool = false;
+                dx.forEach(function(d) { 
+                     
+                    var jsonObj = {
+                        label: d.label,
+                        lineTension: d.lineTension,
+                        backgroundColor: d.backgroundColor,
+                        borderColor: d.borderColor,
+                        hoverBackgroundColor: d.hoverBackgroundColor,
+                        hoverBorderColor: d.hoverBorderColor,
+                        data: d.data
+                    }  
+                    if(d.label != undefined && d.data.length != 0)
+                    {
+                        ds.push(jsonObj)
+                        alert(jsonObj.label)
+                    }
+
+                   
+                })
+                
+                var data = {
+                    labels: ls,
+                    datasets: ds
+                };
+
+                var dailyChart = new Chart(chrt2, {
+                    type: 'line',
+                    data: data,
+                    options: {
+                        responsive: false,
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: { 
+                                    distribution: 'linear',
+                                    unit: 'hour'
+                                }
+                            }]
+                        },
+                        animation: false
+                    },
+                    fill: false
+                });
+                     
+            }
+
+    }
+
+    // This is how to get monthly chart.
+    const GetMonthlyChart = (dx) => {
+        var chrt2 = document.getElementById("monthlyChart").getContext("2d");
+        
+            if(dx != null)
+            {
+                var bool = false;
+                dx.forEach(function(d) { 
+                     
+                    var jsonObj = {
+                        label: d.label,
+                        lineTension: d.lineTension,
+                        backgroundColor: d.backgroundColor,
+                        borderColor: d.borderColor,
+                        hoverBackgroundColor: d.hoverBackgroundColor,
+                        hoverBorderColor: d.hoverBorderColor,
+                        data: d.data
+                    }  
+                    if(d.label != undefined && d.data.length != 0)
+                    {
+                        ds.push(jsonObj)
+                        alert(jsonObj.label)
+                    }
+
+                   
+                })
+                
+                var data = {
+                    labels: ls,
+                    datasets: ds
+                };
+
+                var monthlyChart = new Chart(chrt2, {
+                    type: 'line',
+                    data: data,
+                    options: {
+                        responsive: false,
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: { 
+                                    distribution: 'linear',
+                                    unit: 'hour'
+                                }
+                            }]
+                        },
+                        animation: false
+                    },
+                    fill: false
+                });
+                     
+            }
+
+    }
+
+    socket2.on("update_daily", function(dx) {
+        GetDailyChart(dx)
+        dx = null
+        
+        //socket2.removeAllListeners();
+        //socket2.disconnect()
+        //socket2 = io();
+    })
+
+    socket2.on("update_monthly", function(dx) {
+        GetMonthlyChart(dx)
+    })
+    
+
+</script>
+    </body>
+</html>

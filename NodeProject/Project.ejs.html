@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Project</title>
+        <script src="./node_modules/chart.js/dist/Chart.js"></script>
+        <script src="chart.js"></script>
+    </head>
+    <body>
+        <h1>Raspberry Pi Temperature Logging System</h1>
+        <div><canvas id="mycanvas" width="400" height="400"></canvas></div>
+
+<script>
+    var chrt = document.getElementById("mycanvas").getContext("2d");
+var data = {
+   labels: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul"],
+   datasets: [{
+      label: "My First dataset",
+      backgroundColor: "rgba(220,220,220,0.8)",
+      borderColor: "rgba(220,220,220,0.8)",
+      hoverBackgroundColor: "rgba(220,220,220,0.75)",
+      hoverBorderColor: "rgba(220,220,220,1)",
+      data: [65, 59, 80, 81, 56, 55, 40]
+   }]
+};
+var myFirstChart = new Chart(chrt, {
+   type: 'bar',
+   data: data
+});
+</script>
+    </body>
+</html>
