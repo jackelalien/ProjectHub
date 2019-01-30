@@ -1,4 +1,5 @@
 Project Hub for my projects:
+-- Note: All Projects are in Separate Branches
 
 Projects:
 1) React JS
