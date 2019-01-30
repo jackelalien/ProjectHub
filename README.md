@@ -38,6 +38,6 @@ Projects:
 5.2) Includes basic Node.JS code for rendering (unfinished).
 
 
-6) Depth of Field Project
+6) Depth of Field Project (Branch_DOF)
 
 6.1) Implementation of DoF for Eye Trackers.
