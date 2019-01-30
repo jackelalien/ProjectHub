@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Citizen_Of_The_Forest/Citizen_Of_The_Forest.unity
+  isLoaded: 1
+  isActive: 1
