@@ -1,0 +1,781 @@
+<header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <p>
+            Edit <code>src/App.js</code> and save to reload.
+          </p>
+          <a
+            className="App-link"
+            href="https://reactjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn React
+          </a>
+        </header>
+
+
+Debugging:
+Chrome Dev Tools:
+Sources Tab:
+- Step through step by step
+- Go to App.js
+- Can place breakpoints
+
+React Dev Tools:
+- Chrome Extension
+
+
+Error Boundaries:
+- Showing Custom Error Messages
+- Testing: const rnd = Math.random()
+if rnd > 0.7 throw new Error("Something went wrong");
+
+App.JS should have few render calls, so split it up.
+- Example, a PersonList component:
+-- Pass array of persons into the component, and do the functionality in there.
+- A Cockpit component.
+
+Containers folder:
+AppJS.
+
+Assets folder
+Components Folder
+
+
+Components: Stateless vs. Stateful
+Stateful:
+- Class Extends XY
+- State Variable
+- Containers
+- Access to State
+- Lifecycle Hooks
+- State/Props via this
+- Only use if needing to manage state or access to lifecycle Hooks
+- Props are passed in index.js, things like Title
+
+Stateless:
+- const X = (props) => { }
+- props.XY
+
+Component Lifecycle:
+- Only in Stateful
+-- Constructor()
+-- ComponentWillMount()
+-- ComponentWillReceiveProps()
+-- ShouldComponentUpdate()
+-- ComponentWouldUpdate()
+-- ComponentDidUpdate()
+-- ComponentDidCatch()
+-- ComponentDidMount()
+-- ComponentWillUnmount()
+-- Render()
+
+- CREATION:
+-- constructor(props) --> Default ES6 Class Feature
+--- Call Super(props), Do set up State, don't cause side effects
+-- ComponentWillMount() --> Exists for Historic Reasons
+--- Do update state, last minute optimization, may not be implemented
+-- render()
+--- This is where we work.
+--- Doesn't mean it access real DOM - Prepare/Structure JSX code
+- Render Child Components
+- ComponentDidMount()
+-- Do Cause Side Effects (reach out to web to fetch data. DO NOT UPDATE STATE HERE)
+- Before a comopnent is removed, ComponentWillUnmount() is called.
+-- Run something before removal
+
+- UPDATE:
+-- ComponentWillReceiveProps(nextProps)
+--- do sync state to props, don't reach out to fetch data or it will rerender
+-- ShouldComponentUpdate(nextProps, nextState)
+--- May Cancel Updating Process (You can decide, return true or false)
+-- ComponentWillUpdate(nextProps, nextState)
+--- Sync State to Props
+-- render()
+-- Update Child Component Props
+-- ComponentDidUpdate()
+--- Cause Side Effects, DO NOT UPDATE STATE
+
+ShouldComponentUpdate checks for differences, and updates. This is good for performance.
+PureComponent - Exactly the same as Component but ShouldComponentUpdate is built in, and actually has better performance.
+
+PureComponent automatically does the ShouldComponentUpdate on changeds.
+Strategically place these, because this does ALL PROPS AND States, so can be an issue or slower
+
+- RENDERING:
+-- Top to bottom, only when State/Props change 
+
+
+Getting new Font Families:
+- Go to Google Fonts (Open Sans)
+- Customize (pick bold and regular)
+- Embed
+- Go to public index.htmk, add link above title.
+
+
+Http Requests in React:
+- Nothing special to it, page submits form, and you get a new html page (multipage)
+- Decoupling with single-page. Strong differentation b/w frontend/backend
+- Server <-- React
+- Server -- JSON --> React
+- Server is as RESTful API
+
+jsonplaceholder.typicode.com --> Great for testing REST API
+Use Axios github.com/axios/axios
+
+Interceptors - Execute code globally.
+- Set common headers / authorization
+- Responses / Handle Errors
+
+
+Removing Interceptors in real time:
+var myInterceptor = axios.interceptors.request.use(function () {/*...*/});
+axios.interceptors.request.eject(myInterceptor);
+
+Routing:
+- Showing more than one page.
+
+Multiple pages in a single plage app?
+- Single Page: HTML File 
+- Use JS to render different pages for different paths.
+- Rerender parts of single page
+- Router package to add functionality.
+-- Parses URL/paths
+-- Read Config
+-- Render/Load JSX/Component
+
+withRouter Wrapper - makes components route aware, passes on props. See Post.js
+
+
+Absolute vs. Relative paths:
+- Absolute - append to example.com
+- Relative - Check your on your domain. 
+-- Build path dynamically. this.props.match.url + 'link'
+
+
+But how do you extract search (also referred to as "query") parameters (=> ?something=somevalue  at the end of the URL)? How do you extract the fragment (=> #something  at the end of the URL)?
+
+Query Params:
+You can pass them easily like this:
+
+<Link to="/my-path?start=5">Go to Start</Link> 
+
+or
+
+<Link 
+    to={‌{
+        pathname: '/my-path',
+        search: '?start=5'
+    }}
+    >Go to Start</Link>
+React router makes it easy to get access to the search string: props.location.search .
+
+But that will only give you something like ?start=5 
+
+You probably want to get the key-value pair, without the ?  and the = . Here's a snippet which allows you to easily extract that information:
+
+componentDidMount() {
+    const query = new URLSearchParams(this.props.location.search);
+    for (let param of query.entries()) {
+        console.log(param); // yields ['start', '5']
+    }
+}
+URLSearchParams  is a built-in object, shipping with vanilla JavaScript. It returns an object, which exposes the entries()  method. entries()  returns an Iterator - basically a construct which can be used in a for...of...  loop (as shown above).
+
+When looping through query.entries() , you get arrays where the first element is the key name (e.g. start ) and the second element is the assigned value (e.g. 5 ).
+
+Fragment:
+You can pass it easily like this:
+
+<Link to="/my-path#start-position">Go to Start</Link> 
+
+or
+
+<Link 
+    to={‌{
+        pathname: '/my-path',
+        hash: 'start-position'
+    }}
+    >Go to Start</Link>
+React router makes it easy to extract the fragment. You can simply access props.location.hash .
+
+
+NESTED ROUTES:
+- Putting a route in a route page (moving FullPost to Posts):
+-- Put /:id below section
+-- ORDER MATTERS
+-- Change home / to below new Post
+-- Nested Route renders both at the same time.
+-- this.props.match.url + '/:id' in path
+
+With dynamic routes, won't load new post right away:
+- componentDidUpdate()
+- Add a method: loadData()
+-- Holds old code from ComponentDidMount. Call this.loadData in both lifecycle hooks!
+-- Infinite loop problem...
+-- Easy fixes, make !== to != OR take id and add + 1 to make a number.
+
+Redirecting:
+- Import Redirect Component
+- Put in JSX Switch Statement.
+- <Redirect from="/" to="/posts"/>
+-- FROM CANT BE USED OUTSIDE SWITCH!
+-- Doesn't render content, just changes URL to reach another route to render content.
+
+Conditional Redirects:
+- Redirect on submit, etc.
+
+Guards:
+- Using Authentication...
+
+Lazy Loading:
+- New Folder: HOC, New Component: AsyncComponent.js
+- import React Component, pass param: importComponent.
+- Return class extends component
+- State: component: null
+- ComponentDidMount() { importComponent().then(cmp => { this.setState({component: cmp.default})}) }
+- Render() { const C = this.state.component; return(C ? <C {...this.props}/> : null) }
+- export
+
+- Go to blog, import new post dynamically.
+- Webpack needs to be able to dynamicall prepare.
+- Comment out import. IMport AsyncComponent
+- const NewPost = asyncComponent(() => return import(./NewPost/NewPost));
+
+ALT WAY:
+- Lazy Loading with React Suspense
+- In App.js, inside browserRouter, use <React.Fragment> and wrap everything else.
+- Import Suspense component from React
+- const X = React.lazy(() => import(FileName))
+- In the route, make a change -> change component to render={() => <Suspense fallback={<div>Loading</div>}><thing you wanna render></Suspense>}
+- Good for showing on clicks, auth, etc.
+
+
+Routing and Server Deployment:
+- User --> Server
+-- Before loading page, server finds what page to load.
+-- Problem. React App knows routes....
+-- No /posts route on server.
+- Configure server so that it forwards all requests to client, so that it always returns index.html (and unknown requests)
+- React takes over.
+- ALWAYS RETURN INDEX HTML
+- Request to example.com/my-app --> SET BASE PATH IN REACT.
+
+In our application, where using BrowserRouter...
+- <BrowserRouter basename="/my-app"> (wherever you serving app from)
+- 
+
+ <section>
+                    <FullPost id={this.state.selectedPostId} />
+                </section>
+                <section>
+                    <NewPost />
+                </section>
+
+
+
+Complexity of State:
+- App
+-- Users (Is user signed in?)
+--- Auth 
+--- Dashboard
+-- Products 
+
+How to get information into different areas of the app??
+-- REDUX GOOD FOR AUTHENTICATION
+-- Having Global Store is useful, which Redux does.
+
+Redux Flow:
+- Central Store in each Redux App
+-- 3rd Party, Independent of React
+-- Stores Entire Application State
+-- Giant JS object
+- In react, we have components
+-- Wants to manipulate app state.
+-- Do not directly modify central store...
+-- Components uses JS code to dispactch to actions
+--- Actions: Information package (pre-defined with possible payload)
+--- If actions is add ingredient - pass which ingredient, part of action.
+--- Action REACHES to Reducers (one root reducer, directly connects to Central Store)
+--- Reducer checks action type, and defines code for that type of action in reducer.
+---- Pure function that receives action, old state, and spits out updated state. Can be multiple, combined reducers.
+-- Central Store, when updated, triggers a subscription update, and passes updated state to application (pass updated state as props to component!)
+
+
+Immutable Update Patterns
+Section 14, Lecture 256
+Immutable Update Patterns on reduxjs.org: http://redux.js.org/docs/recipes/reducers/ImmutableUpdatePatterns.html
+
+Updating Nested Objects
+The key to updating nested data is that every level of nesting must be copied and updated appropriately. This is often a difficult concept for those learning Redux, and there are some specific problems that frequently occur when trying to update nested objects. These lead to accidental direct mutation, and should be avoided.
+
+Common Mistake #1: New variables that point to the same objects
+Defining a new variable does not create a new actual object - it only creates another reference to the same object. An example of this error would be:
+
+function updateNestedState(state, action) {
+    let nestedState = state.nestedState;
+    // ERROR: this directly modifies the existing object reference - don't do this!
+    nestedState.nestedField = action.data;
+ 
+    return {
+        ...state,
+        nestedState
+    };
+}
+This function does correctly return a shallow copy of the top-level state object, but because the nestedState variable was still pointing at the existing object, the state was directly mutated.
+
+Common Mistake #2: Only making a shallow copy of one level
+Another common version of this error looks like this:
+
+function updateNestedState(state, action) {
+    // Problem: this only does a shallow copy!
+    let newState = {...state};
+ 
+    // ERROR: nestedState is still the same object!
+    newState.nestedState.nestedField = action.data;
+ 
+    return newState;
+}
+Doing a shallow copy of the top level is not sufficient - the nestedState object should be copied as well.
+
+Correct Approach: Copying All Levels of Nested Data
+Unfortunately, the process of correctly applying immutable updates to deeply nested state can easily become verbose and hard to read. Here's what an example of updating state.first.second[someId].fourth might look like:
+
+function updateVeryNestedField(state, action) {
+    return {
+        ...state,
+        first : {
+            ...state.first,
+            second : {
+                ...state.first.second,
+                [action.someId] : {
+                    ...state.first.second[action.someId],
+                    fourth : action.someValue
+                }
+            }
+        }
+    }
+}
+Obviously, each layer of nesting makes this harder to read, and gives more chances to make mistakes. This is one of several reasons why you are encouraged to keep your state flattened, and compose reducers as much as possible.
+
+Inserting and Removing Items in Arrays
+Normally, a Javascript array's contents are modified using mutative functions like push, unshift, and splice. Since we don't want to mutate state directly in reducers, those should normally be avoided. Because of that, you might see "insert" or "remove" behavior written like this:
+
+function insertItem(array, action) {
+    return [
+        ...array.slice(0, action.index),
+        action.item,
+        ...array.slice(action.index)
+    ]
+}
+ 
+function removeItem(array, action) {
+    return [
+        ...array.slice(0, action.index),
+        ...array.slice(action.index + 1)
+    ];
+}
+However, remember that the key is that the original in-memory reference is not modified. As long as we make a copy first, we can safely mutate the copy. Note that this is true for both arrays and objects, but nested values still must be updated using the same rules.
+
+This means that we could also write the insert and remove functions like this:
+
+function insertItem(array, action) {
+    let newArray = array.slice();
+    newArray.splice(action.index, 0, action.item);
+    return newArray;
+}
+ 
+function removeItem(array, action) {
+    let newArray = array.slice();
+    newArray.splice(action.index, 1);
+    return newArray;
+}
+The remove function could also be implemented as:
+
+function removeItem(array, action) {
+    return array.filter( (item, index) => index !== action.index);
+}
+Updating an Item in an Array
+Updating one item in an array can be accomplished by using Array.map, returning a new value for the item we want to update, and returning the existing values for all other items:
+
+function updateObjectInArray(array, action) {
+    return array.map( (item, index) => {
+        if(index !== action.index) {
+            // This isn't the item we care about - keep it as-is
+            return item;
+        }
+ 
+        // Otherwise, this is the one we want - return an updated value
+        return {
+            ...item,
+            ...action.item
+        };    
+    });
+}
+Immutable Update Utility Libraries
+Because writing immutable update code can become tedious, there are a number of utility libraries that try to abstract out the process. These libraries vary in APIs and usage, but all try to provide a shorter and more succinct way of writing these updates. Some, like dot-prop-immutable, take string paths for commands:
+
+state = dotProp.set(state, `todos.${index}.complete`, true)
+Others, like immutability-helper (a fork of the now-deprecated React Immutability Helpers addon), use nested values and helper functions:
+
+var collection = [1, 2, {a: [12, 17, 15]}];
+var newCollection = update(collection, {2: {a: {$splice: [[1, 1, 13, 14]]}}});
+They can provide a useful alternative to writing manual immutable update logic.
+
+Immutable Data#Immutable Update Utilities section of the Redux Addons Catalog.
+
+
+Types of State
+-----------------------------
+    Type           Example                       Use Redux?
+Local UI    | Show Hide Backdrop     | Not really, handled in components
+Persistent  | All Users, Posts       | Stored on Server, relevant slices managed by Redux
+Client      | Authenticated, Filters | Yes
+
+
+Middleware 
+-----------------------------
+- ExpressJS - look into that.
+- Piece of code
+
+Redux DevTools:
+- Same as React DevTools
+- Follow the steps to set up.
+- Wrap applyMiddleware with composeEnhancers
+
+
+Actions should be structured into separate files.
+
+Redux-Thunk - Returns a function that eventually dispatches. Can make async
+- in our return (dispatch, getState) - can get state
+-- const oldCounter = getState().ctr.counter;
+
+Utility Functions:
+-- Cleaning Up Reducers (Optional)
+-- 
+
+Utility.js:
+const updatedObject - (oldObject, updatedValues) => {
+    return {
+        ...oldObject,
+        ...updatedValues
+    }
+}
+
+Go to Counter.js (Import Utility):
+return updatedObject (state, {counter: state.counter - action.val})
+
+Authentication:
+
+SPA --> Server (Stateless, RESTful, return a token)
+Token --> localStorage
+
+
+Adjustments:
+- Signup/Signin Views
+- Guards
+- Pass Auth Info to backend
+
+React has security for cross-scripting attacks
+
+So does firebase:
+- Refresh Token doesn't expire. Send to endpoint for:
+-- Exchanging a Refresh token for an ID Token for new ID tokens
+-- Go to an endpoint, and do that for every HTTP request. 
+-- Get a new one when automatically signed in.
+-- Opted to not use that here, but still can happen.
+-- Having a non-expiring token to exchange for new tokens leads to security issues.
+-- BE CAREFUL ABOUT PROTECTING REFRESH TOKEN.
+-- It can be used to not lock out users, even after a week.
+
+
+Testing:
+- Write Automated Tests
+- Build App
+- Test Manually in Browser 
+- Automated Test
+- Ship App to Server.
+
+Testing Tools:
+Test Runner --> Executes Tests and Provides Validation Library
+-- Unit Tests - don't run in browser, often emulated in NodeJS.
+-- Runner executes that code in environment.
+-- React comes with a suite to run tests.
+-- Jest - popular tool.
+
+Emulating/Mounting Components to non-existent DOM and traversing components:
+- Testing Utilities --> Simulate React pp --> React Test Utilities
+- Enzyme - Alternate 
+
+What to Test?
+- Need a lot of practice.
+-- Don't Test the Libraries
+-- Test code you add to your app.
+-- Don't need to test axios post, or whatever. (Fake Data coming back from server)
+-- Don't Test Complex Connections!
+-- Test if a button clicked and something triggered as needed.
+-- Only need to test if a React component rendered correctly.
+-- Test isolated units and conditional output.
+
+JEST:
+- This is what we use with React, but is Independent.
+- Mock (Replace) Functions - executing mock reach to web, etc.
+
+
+airbnb.io/Enzyme
+
+
+DEPLOYMENT:
+
+Steps:
+- Check and Adjust Basepath (wrapping route in browserrouter. basename='/my-app/')
+- If serving from example.com/my-app, do that.
+- Build and Optimize Project.
+-- npm run build (in project)
+- Server must ALWAYS serve index.html (also for 404 cases).
+-- Server receives route, server doesn't know path, but we took care of it.
+- Upload Build Artifacts to STATIC server. Server doesn't need PHP/Node/etc. SPA consists of HTML and a lot of JS.
+- Firebase good for this. You can have PHP/MySQL if doing that along with your page.
+
+
+The project was built assuming it is hosted at the server root.
+You can control this with the homepage field in your package.json.
+For example, add this to build it for GitHub Pages:
+
+  "homepage" : "http://myname.github.io/myapp",
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+
+Find out more about deployment here:
+
+  http://bit.ly/CRA-deploy
+
+
+
+WEBPACK:
+- Bundler
+- Take all kinds of files and bundle each connecting file. Optimization included.
+- Run some additional logic to transform code.
+- How it works:
+-- entry point (app.js) or multiple entries
+-- Will have dependency graph starting with root entry. 
+-- 1) Loaders (babel-loader, css-loader, etc). (File-type dependent transformations)
+-- 2) Plugins (Uglify) (Per File Basis) (Global transformations)
+-- Bundles into an output (dist/bundle.js) --> Correctly Ordered/Concatenated output
+- Basic Workflow Reqs:
+-- Compile Next-Gen JS Features (Compile Next-Gen to Current-Gen)
+-- Handle JSX
+-- CSS Autoprefixing
+-- Support Image Imports
+-- Optimize our Code
+
+Note: npm install --save-dev saves dependency as DEV ONLY
+Regular save is for PRODUCTION
+
+
+npm install --save-dev babel-loader babel-core babel-preset-react babel-preset-env
+npm install --save-dev webpack (@3)
+npm install --save-dev css-loader style-loader
+npm install --save-dev postcss-loader //Runs before CSS loader and adjusts - transforms CSS
+npm install --save-dev autoprefixer
+npm install --save-dev url-loader //For images. 
+npm install --save-dev file-loader //Fallback - exceeding a limit. Copies a file.
+npm install --save-dev babel-preset-stage-2
+npm install --save-dev html-webpack-plugin
+npm install --save-dev webpack-cli
+
+from before: npm install -g firebase-tools
+
+ai/browserlists on github helps configure babel browsers
+
+
+
+WEBPACK CONFIG:
+module.exports = {
+    devtool: 'cheap-module-eval-source-map',
+    entry: './src/index.js', //Look at index first, analyze dependencies.
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js', //CSS and images are handled differently under different loaders.
+        publicPath: '',
+    },
+    resolve: {
+        extensions: ['.js', '.jsx'] //Resolve extensions automatically
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,//If it ends in JS...
+                loader: 'babel-loader', //Using the Babel loader, transpiles next-gen to current-gen JS
+                exclude:  /node_modules/ //Regular Expression - ignore node_modules.
+            },
+            {
+                test: /\.css$/,
+                exclude: /node_modules/,
+                //Loader with config while loader does not use config in here. (External)
+                //USE ARRAY: APPLIES FROM BOTTOM TO TOP (R TO L)
+                use: [
+                    //Loads styles
+                    { loader: 'style-loader' },
+                    //Main CSS Loader - Parses and Handles CSS
+                    { 
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders: 1, //Run 1 loader before CSS Loader.
+                            modules: true,
+                            localIdentName: '[name]__[local]__[hash:base64:5]'
+                        }    
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            ident: 'postcss',
+                            plugins: () => [
+                                autoprefixer({
+                                    browsers: [
+                                        "> 1%", 
+                                        "last 2 versions"
+                                    ]
+                                })
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.(png|jpe?g|gif)$/,
+                loader: 'url-loader?limit=8000&name=images/[name].[ext]', //Copies image into images in dist folder.
+            }
+            //Can do rules for fonts, etc.
+        ]
+    }
+};
+
+
+
+The current setup won't support all browsers theoretically supported by React. Features like Promises and Object.assign()  are missing in older browsers - especially in IE of course.
+
+If you need to support these browsers, you need to add a polyfill (a package which provides these features for older browsers). babel-polyfill  is a great and easy-to-use choice.
+
+Add it like this:
+
+npm install --save babel-polyfill 
+
+Add the following import to the top of your index.js file:
+
+import 'babel-polyfill';
+Change the config of your env  babel preset in the .babelrc  file: 
+
+"presets": [
+    ["env", {
+        "targets": {
+            "browsers": [
+                "> 1%",
+                "last 2 versions"
+            ]
+        },
+        "useBuiltIns": "entry"
+     }],
+     "stage-2",
+     "react"
+ ],
+useBuiltIns  was added and by setting it to 'entry' , the import in the index.js  file (import 'babel-polyfill' ) is actually changed to import whatever features need to be supported for your chosen browsers and environment. More information can be found here: https://github.com/babel/babel-preset-env#usebuiltins-entry
+
+
+NextJS - another library to go on top of React (Specific Folder Structure)
+- Server side rendering out the box.
+-- Advanced React concept
+-- When a user enters a URL leading to the react app, it will pre-render it on the server, so that the server returns the pre-rendered HTML.
+-- Setup:
+--- Server (React App Code)
+--- Client (Browser)
+--- Client First Page Load 
+--- Google Crawlers will not understand or read page correctly.
+--- Server Fetches and RENDERS React App
+--- Returns rendered First Page + React App Bundle, still a SPA
+- Look online on how to use.
+- DO NOT USE REACT ROUTES. We create folders and files for routing.
+- Auto Lazy Loading! 
+- Making creation more convienent
+
+-- USE THIS FOR FUTURE PROJECTS!
+- Drawback - specific file structure.
+- Pre-renders content as pages on server. Automatically code splits (lazy loading)
+
+Building NextJS:
+- Use .next folder.
+- NodeJS host
+- NPM Start
+
+
+CSS Anims Limitations:
+- Modal and backdrop always in the DOM, even if not displayed.
+
+
+Alt Packages: 
+- React-Motion (Different Approach - tries to emulate real world physics. Define start/end states. Checkout Github demos)
+-- This seems awesome.
+
+- React Move
+-- Two exposed components (Animate, NodeGroup)
+-- Always work with Objects, describe state.
+-- Find Detailed Docs
+-- Define Durations/styles
+
+- React Router Transition
+-- Animated Switch Component, replace router switch. 
+-- Define AtEnter/Leave/ACtive. Animate Rounding, Switching of Pages. 
+
+
+REDUX SAGA:
+- Redux Thunk is a package to create action creators to run async code.
+- Nothing wrong with that. This is alternative.
+- Package that follows different approach. 
+
+- Why helpful?
+-- Really what you prefer. No true advantage. Make action creators very lean.
+-- Kinda dumb, im my opinion. Just creates more files.
+-- import call from 'redux-saga/effects'
+-- rewrite yield localStorage....
+-- yield call([localStorage, 'removeItem'], "token");
+--- Advantage: makes generators testables. Can block and not execute.
+-- import all from effects
+--- yield all([
+    takeEvery...,
+    takeEvery...
+])
+--- This runs it all concurrently. Big thing. Axios requests simultaneously is a bigggg thing.
+-- If users hammers purchase button, use latest click.
+--- Import latest.
+--- instead takeevery, use takelatest, always execute latest click.
+
+Pros & Cons for Redux Saga vs Thunks: https://stackoverflow.com/questions/34930735/pros-cons-of-using-redux-saga-with-es6-generators-vs-redux-thunk-with-es2017-asy/34933395
+
+HOOKS:
+- A new way to create components.
+- Still in alpha stage.
+- What it be?
+-- New way of writing our components:
+--- Conversion is annoying.
+--- Lifecycle hooks can be hard to use.
+--- Answers: Functional with hooks. Functional components only. Hooks replace class-only functionalities.
+
+
+More:
+react.rocks
+- Open source React projects.
+Gatsby.js
+- Static Site Generator for React
+- Library
+- Page which uses only HTML, JS, CSS.
+React Native
+- Native mobile apps!!!
+Component Libraries
+- Material UI - material design components.
+- Lots around to load up.
+Preact
+- Lightweight alternative for small apps
